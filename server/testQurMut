@@ -1,0 +1,56 @@
+{
+  client(id: 2){
+    id
+    name
+    email
+    phone
+  }
+  clients {
+    name
+    email
+  }
+  project(id:1){
+    id
+    name
+  }
+  projects{
+    name,
+    status,
+    description
+    client{
+      name
+    }
+  }
+}
+
+mutation{
+  addClient (name:"dp2", email:"dp2@gmail.com", phone:"242343423"){
+    id
+    name
+    email
+    phone
+  }
+}
+
+mutation{
+  deleteClient(id:"6314a7b4222b0d35b43418a8"){
+    name
+  }
+}
+
+
+mutation{
+  addProject(
+    name:"new project for dp",
+    description:"this is new project for dp",
+    status: new,
+    clientId: "6314a3aea3f8d4e1c947c341"
+  ){
+    name
+    id
+  }
+}
+
+
+
+
