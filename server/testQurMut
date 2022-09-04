@@ -13,15 +13,20 @@
     id
     name
   }
-  projects{
+}
+
+{
+    projects{
     name,
     status,
     description
     client{
+      id
       name
     }
   }
 }
+
 
 mutation{
   addClient (name:"dp2", email:"dp2@gmail.com", phone:"242343423"){
@@ -51,6 +56,12 @@ mutation{
   }
 }
 
-
+mutation{
+  deleteProject(id: "6314b61092e1452f15c0b8cf"){
+    id,
+    name,
+    status
+  }
+}
 
 
