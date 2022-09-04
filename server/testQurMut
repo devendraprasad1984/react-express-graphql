@@ -43,6 +43,12 @@ mutation{
   }
 }
 
+query getClients{
+    clients{
+    id,name,email,phone
+    }
+}
+
 
 mutation{
   addProject(
