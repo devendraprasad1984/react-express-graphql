@@ -64,4 +64,10 @@ mutation{
   }
 }
 
+mutation{
+  updateProject(id: "6314b2d492e1452f15c0b8cb", name:"Updated Name", status: completed){
+    id,name,status, description
+  }
+}
+
 
