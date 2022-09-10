@@ -14,16 +14,11 @@ const {
     GraphQLEnumType
 } = require('graphql')
 
-const StatusObject = (name)=> ({
-    type: new GraphQLEnumType({
-        name,
-        values: {
-            new: {value: 'Not Started'},
-            progress: {value: 'In Progress'},
-            completed: {value: 'Completed'},
-        },
-    }),
-})
+const StatusObject = {
+    new: {value: 'Not Started'},
+    progress: {value: 'In Progress'},
+    completed: {value: 'Completed'},
+}
 
 const findClient = (id) => {
     // return clients.find(client => client.id === id)
@@ -113,7 +108,13 @@ const mutation = new GraphQLObjectType({
             args: {
                 name: {type: GraphQLNonNull(GraphQLString)},
                 description: {type: GraphQLNonNull(GraphQLString)},
-                status: {...StatusObject('ProjectStatusAddition'), defaultValue: 'Not started'},
+                status: {
+                    type: new GraphQLEnumType({
+                        name: 'ProjectStatusAddition',
+                        values: {...StatusObject}
+                    })
+                    , defaultValue: 'Not started'
+                },
                 clientId: {type: GraphQLNonNull(GraphQLID)}
             },
             resolve(parent, args) {
@@ -143,7 +144,12 @@ const mutation = new GraphQLObjectType({
                 id: {type: GraphQLNonNull(GraphQLID)},
                 name: {type: GraphQLString},
                 description: {type: GraphQLString},
-                status: {...StatusObject('ProjectStatusUpdate')},
+                status: {
+                    type: new GraphQLEnumType({
+                        name: 'ProjectStatusUpdate',
+                        values: {...StatusObject}
+                    })
+                },
             },
             resolve(parent, args) {
                 return Project.findByIdAndUpdate(
@@ -163,7 +169,6 @@ const mutation = new GraphQLObjectType({
 
     }
 })
-
 
 module.exports = new GraphQLSchema({
     query: rootQueryObject,

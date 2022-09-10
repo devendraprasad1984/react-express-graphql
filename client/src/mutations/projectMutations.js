@@ -4,14 +4,14 @@ const ADD_PROJECT = gql`
   mutation AddProject(
     $name: String!
     $description: String!
-    $status: ProjectStatus!
     $clientId: ID!
+    $status: ProjectStatusAddition!
   ) {
     addProject(
       name: $name
       description: $description
-      status: $status
       clientId: $clientId
+      status: $status
     ) {
       id
       name
@@ -40,7 +40,7 @@ const UPDATE_PROJECT = gql`
     $id: ID!
     $name: String!
     $description: String!
-    $status: ProjectStatusUpdate!
+    $status: ProjectStatusUpdate
   ) {
     updateProject(
       id: $id
