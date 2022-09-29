@@ -1,5 +1,18 @@
 import {GraphQLServer} from 'graphql-yoga'
 
+
+const users=[
+    {id:1,name:'dp',email:'dp@abc.com'},
+    {id:2,name:'dp1',email:'dp@abc.com'},
+    {id:3,name:'dp2',email:'dp@abc.com'}
+]
+const posts=[
+    {id:1,title:'test title',body:'this is nice', published:true},
+    {id:2,title:'test title1',body:'this is nice1', published:false},
+    {id:3,title:'test title2',body:'this is nice2', published:false},
+    {id:4,title:'test title3',body:'this is nice3', published:true},
+]
+
 //all type definitions for apis  goes here
 //5 scaler types - single discrete value: String, Boolean, Int, Float, ID
 //! - required
@@ -7,11 +20,14 @@ import {GraphQLServer} from 'graphql-yoga'
 const typeDefs = `
     type Query {
         hello: String!
-        me: User!
-        post: Post!
         greeting(name: String): String!
         addition(val1: Int!, val2: Int!): Int!
         grades: [Int!]!
+
+        me: User!
+        post: Post!
+        users(query: String): [User!]!
+        posts: [Post!]!
     }
     type User {
         id: ID!,
@@ -41,6 +57,14 @@ const resolvers = {
             return {
                 id, name, email, age
             }
+        },
+        users(parent, args, ctx, info){
+            if(!args.query) return users
+            let filteredUsers = users.filter((user)=>user.name.toLowerCase().includes(args.query.toLowerCase()))
+            return filteredUsers
+        },
+        posts(parent, args, ctx, info){
+            return posts
         },
         post: () => {
             return {
