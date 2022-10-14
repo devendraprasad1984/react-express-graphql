@@ -1,4 +1,5 @@
 import { GraphQLServer } from "graphql-yoga";
+import { v4 as uuidV4}  from 'uuid'
 
 const users = [
   { id: 1, name: "dp", email: "dp@abc.com" },
@@ -36,10 +37,10 @@ const posts = [
   },
 ];
 const comments = [
-  { id: "102", text: "commen1", author: 1 },
-  { id: "103", text: "commen2", author: 2 },
-  { id: "104", text: "commen3", author: 3 },
-  { id: "105", text: "commen4", author: 2 },
+  { id: "102", text: "commen1", author: 1, post: 1 },
+  { id: "103", text: "commen2", author: 2, post: 1 },
+  { id: "104", text: "commen3", author: 3, post: 3 },
+  { id: "105", text: "commen4", author: 2, post: 4 },
 ];
 
 //all type definitions for apis  goes here
@@ -59,13 +60,20 @@ const typeDefs = `
         posts(query: String): [Post!]!
         comments: [Comment!]!
     }
+    type Mutation{
+        createUser(name: String!, email: String!, age: Int): User!
+    }
+
+
+
+
     type User {
         id: ID!,
         name: String!
         email: String!
         age: Int
         posts: [Post!]!
-        comments: [Comment!]!
+        comments: [Comment!]! #this will define child resolver
     }
     type Post {
         id: ID!
@@ -73,11 +81,13 @@ const typeDefs = `
         body: String!
         published: Boolean
         author: User!
+        comments: [Comment!]!
     }
     type Comment{
         id: ID!
         text: String!
-        author: User!
+        author: User! #this will be the resolver function inside them
+        post: Post!
     }
 `;
 
@@ -143,6 +153,22 @@ const resolvers = {
       return [99, 12, 10];
     },
   },
+  Mutation: {
+    createUser(parent, args, ctx, info){
+        let {name, email, age} = args
+        let emailTaken = users.some(user=>user.email===email)
+        if(emailTaken){
+            throw new Error('email already registered')
+        }
+        let newUser={
+            id: uuidV4(),
+            name, email, age
+        }
+        users.push(newUser)
+        return newUser
+    }
+  },
+
   //graphql will call with each post, parent will hold the Post object
   //resolver name author should match the property that has custom type in Post object ie author in this case or posts in User
   //child resolvers in this case
@@ -151,6 +177,12 @@ const resolvers = {
     author(parent, args, ctx, info) {
       //parent is author in this case
       return users.find((user) => user.id === parent.author);
+    },
+
+    //parent here is post
+    comments(parent, args, ctx, info) {
+      //parent is user in this case
+      return comments.filter((comment) => comment.post === parent.id);
     },
   },
   User: {
@@ -168,6 +200,10 @@ const resolvers = {
     author(parent, args, ctx, info) {
       //parent is comment
       return users.find((user) => user.id === parent.author);
+    },
+    post: (parent, args, ctx, info) => {
+      //parent here is post
+      return posts.find((post) => post.id === parent.post);
     },
   },
 };
